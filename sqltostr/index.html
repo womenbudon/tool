@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+		<style>
+			.container {
+				height:500px;
+				width:1300px;
+				display: inline-block;
+				clear: both;
+			}
+			.input-text {
+				float:left;
+				width:100%;
+				height: 100%;
+			}
+			.opera-sql {
+				display: inline-block;
+				margin-top:20px;
+			}
+			#submit {
+				height:40px;
+				width: 100px;
+				background-color:blue;
+				font-size: 25px;
+				cursor: pointer;
+			}
+			#cancel {
+				height:40px;
+				width: 100px;
+				background-color:orange;
+				font-size: 25px;
+				margin-left:20px;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+	<div class="container">
+		<!-- 输入 -->
+		<textarea class="input-text"></textarea>
+	</div>
+	<div class="opera-sql">
+		<button id="submit">提交</button>
+			<button id="cancel">重置</button>
+	</div>
+    <script src="js/jquery.js"></script>
+    <script>
+    // 页面初始化加载
+    $(function() {
+
+    	// 绑定提交事件
+    	$('#submit').on('click', function(e) {
+			sql2str();
+    	});
+    	$('#cancel').on('click', function(e){
+    		$('.input-text').val('');
+    	});
+    });
+
+    // sql转换字符串
+    function sql2str() {
+    	var sql = $('.input-text').val();
+    	var tempArr = [];
+    	tempArr = sql.split('\n');	// 根据换行符进行分割
+
+		// 除去单行注释
+		for(var i=0; i<tempArr.length; i++) {  
+			if(tempArr[i].indexOf('--') != -1) {
+				tempArr[i] = tempArr[i].substr(0, tempArr[i].indexOf('--'));
+			}
+		}
+
+		// 删除空行 和删除文本末尾空行
+    	for(var i=0; i<tempArr.length; i++) {  
+    		if(tempArr[i] == ' ' || !tempArr[i]) { 
+    			tempArr.splice(i, 1);	// 删除空行
+    			i = i-1; // 删除当前元素后，后一元素会变成当前元素
+    			continue; //继续下次循环
+    		}
+    	}
+		
+		// 首行添加 冒号
+		for(var i=0; i<tempArr.length; i++) {  
+			if(i == 0) {	
+    			tempArr[i] = '"'+tempArr[i]+'"\n';
+    		}else {
+    			tempArr[i] = tempArr[i]+'"\n';
+    		}	
+		}
+
+    	// 处理完成连接字符
+    	var str = tempArr.join('+" ');
+		$('.input-text').val(str);
+    }
+    </script	
+	</body>
+</html>
+
